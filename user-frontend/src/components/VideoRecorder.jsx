@@ -42,14 +42,17 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
 
   const startRecording = () => {
     const stream = videoRef.current.srcObject;
-    mediaRecorderRef.current = new MediaRecorder(stream, {
-      mimeType: "video/webm",
-    });
+    const options = { mimeType: 'video/mp4' }; // iPhone uyumlu format
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      console.log(`${options.mimeType} desteklenmiyor, video/webm kullanılacak.`);
+      options.mimeType = 'video/webm'; // Diğer tarayıcılar için uyumlu format
+    }
+    mediaRecorderRef.current = new MediaRecorder(stream, options);
     mediaRecorderRef.current.ondataavailable = (e) => {
       chunks.current.push(e.data);
     };
     mediaRecorderRef.current.onstop = () => {
-      const blob = new Blob(chunks.current, { type: "video/webm" });
+      const blob = new Blob(chunks.current, { type: mediaRecorderRef.current.mimeType });
       uploadVideo(blob, interviewId, userId);
       chunks.current = [];
     };
@@ -61,7 +64,7 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
   const stopRecording = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
-      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
       setIsRecording(false);
       clearInterval(intervalRef.current);
       setTimerRunning(false);
@@ -105,14 +108,12 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
 
   return (
     <div className="relative flex flex-col items-center justify-center h-screen w-screen bg-black">
-      {/* Video Görüntüsü */}
       <video
         ref={videoRef}
         autoPlay
         muted
         className="absolute top-0 left-0 w-full h-full object-cover"
       />
-      {/* Sorular ve Butonlar */}
       <div className="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black via-transparent to-transparent">
         <div className="mb-4 text-center text-white">
           {isRecording && questions.length > 0 ? (
@@ -126,35 +127,24 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
             </>
           ) : (
             <p className="text-gray-300">
-              {isRecording
-                ? "No questions available."
-                : "Start recording to begin questions."}
+              {isRecording ? "No questions available." : "Start recording to begin questions."}
             </p>
           )}
         </div>
         <div className="flex justify-center gap-4">
           {isRecording ? (
             <>
-              <button
-                onClick={stopRecording}
-                className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700"
-              >
+              <button onClick={stopRecording} className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700">
                 Stop
               </button>
               {currentQuestion < questions.length - 1 && (
-                <button
-                  onClick={handleNextQuestion}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700"
-                >
+                <button onClick={handleNextQuestion} className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">
                   Next
                 </button>
               )}
             </>
           ) : (
-            <button
-              onClick={startRecording}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700"
-            >
+            <button onClick={startRecording} className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700">
               Start
             </button>
           )}
