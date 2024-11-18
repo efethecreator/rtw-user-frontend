@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useVideoStore from "../stores/videoStore"; // Video store'u import edin
+import useVideoStore from "../stores/videoStore";
 
 const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -8,7 +8,7 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
   const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
   const navigate = useNavigate();
-  const { checkInterviewStatus } = useVideoStore(); // checkInterviewStatus fonksiyonunu çağırıyoruz
+  const { checkInterviewStatus } = useVideoStore();
 
   const mediaRecorderRef = useRef(null);
   const videoRef = useRef(null);
@@ -16,11 +16,10 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    // Mülakatın süresinin dolup dolmadığını kontrol etme
     const checkStatus = async () => {
       const isActive = await checkInterviewStatus(interviewId);
       if (!isActive) {
-        navigate("/404"); // Süresi dolmuşsa 404 sayfasına yönlendir
+        navigate("/404");
       }
     };
     checkStatus();
@@ -105,68 +104,58 @@ const VideoRecorder = ({ interviewId, userId, uploadVideo, questions }) => {
   };
 
   return (
-    <div className="flex flex-row items-start justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-4 font-sans">
-      {/* Video Kayıt Alanı */}
-      <div className="w-2/3 bg-white rounded-xl shadow-lg p-6 mr-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
-          Interview
-        </h2>
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          className="w-full h-[500px] rounded-lg mb-6 border-2 border-gray-200 shadow-sm object-cover"
-        />
+    <div className="relative flex flex-col items-center justify-center h-screen w-screen bg-black">
+      {/* Video Görüntüsü */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        className="absolute top-0 left-0 w-full h-full object-cover"
+      />
+      {/* Sorular ve Butonlar */}
+      <div className="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black via-transparent to-transparent">
+        <div className="mb-4 text-center text-white">
+          {isRecording && questions.length > 0 ? (
+            <>
+              <p className="text-lg font-bold">
+                Question {currentQuestion + 1}: {questions[currentQuestion]?.question}
+              </p>
+              <p className="text-sm text-gray-300">
+                Remaining Time: {formatTime(currentQuestionTime)}
+              </p>
+            </>
+          ) : (
+            <p className="text-gray-300">
+              {isRecording
+                ? "No questions available."
+                : "Start recording to begin questions."}
+            </p>
+          )}
+        </div>
         <div className="flex justify-center gap-4">
           {isRecording ? (
-            <button
-              onClick={stopRecording}
-              className="text-white bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 shadow-lg shadow-red-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 transform transition-transform duration-200 hover:scale-105"
-            >
-              End Interview
-            </button>
+            <>
+              <button
+                onClick={stopRecording}
+                className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700"
+              >
+                Stop
+              </button>
+              {currentQuestion < questions.length - 1 && (
+                <button
+                  onClick={handleNextQuestion}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700"
+                >
+                  Next
+                </button>
+              )}
+            </>
           ) : (
             <button
               onClick={startRecording}
-              className="text-white bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 shadow-lg shadow-green-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 transform transition-transform duration-200 hover:scale-105"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700"
             >
-              Start Interview
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Sorular ve Kontroller Alanı */}
-      <div className="w-1/3 bg-white rounded-xl shadow-lg p-6 ">
-        <h3 className="text-2xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
-          Questions
-        </h3>
-        {questions.length > 0 && isRecording ? (
-          <div className="text-lg font-medium text-gray-700 mb-4">
-            <p>
-              <span className="text-blue-600 font-bold mr-2">
-                Question {currentQuestion + 1}:
-              </span>
-              {questions[currentQuestion]?.question}
-            </p>
-            <p className="mt-2 text-gray-500">
-              Remaining Time: {formatTime(currentQuestionTime)}
-            </p>
-          </div>
-        ) : (
-          <p className="text-gray-500">
-            {isRecording
-              ? "No questions available."
-              : "Start recording to begin questions."}
-          </p>
-        )}
-        <div className="flex flex-col gap-4 mt-auto">
-          {isRecording && currentQuestion < questions.length - 1 && (
-            <button
-              onClick={handleNextQuestion}
-              className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 shadow-lg shadow-blue-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 mx-auto w-48 transform transition-transform duration-200 hover:scale-105"
-            >
-              Next Question
+              Start
             </button>
           )}
         </div>

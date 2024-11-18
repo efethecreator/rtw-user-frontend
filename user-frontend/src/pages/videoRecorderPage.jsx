@@ -19,7 +19,7 @@ const VideoRecorderPage = () => {
       try {
         const response = await axios.get(
           `http://localhost:8000/api/interview/${id}/questions`,
-          { withCredentials: true } // Ensure cookies are sent with the request
+          { withCredentials: true }
         );
         setQuestions(response.data.questions || []);
       } catch (error) {
@@ -47,8 +47,11 @@ const VideoRecorderPage = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative h-screen w-screen bg-black overflow-hidden">
+      {/* Kullanıcı bilgileri */}
       <UserInformation isOpen={!userId} />
+
+      {/* Video Kayıt Alanı */}
       <div className="absolute inset-0">
         <VideoRecorder
           interviewId={interviewId}
@@ -58,9 +61,9 @@ const VideoRecorderPage = () => {
         />
       </div>
 
-      {/* Upload Popup Indicator */}
+      {/* Video Yükleniyor Göstergesi */}
       {isUploading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <p className="text-lg font-semibold text-gray-700">
               Mülakatınız kaydediliyor...
