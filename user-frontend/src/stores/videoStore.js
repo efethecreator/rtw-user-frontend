@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
 
-
 // Define a constant for base URL
 
 const useVideoStore = create((set) => ({
@@ -11,7 +10,7 @@ const useVideoStore = create((set) => ({
   // Fetch all videos
   fetchVideos: async () => {
     try {
-      const response = await axios.get(`/videos`, {
+      const response = await axios.get(`/api/videos`, {
         withCredentials: true, // Ensure cookies are included
       });
       set({ videos: response.data });
@@ -23,7 +22,7 @@ const useVideoStore = create((set) => ({
   // Create a user
   createUser: async (personalInfo) => {
     try {
-      const response = await axios.post(`/users`, personalInfo, {
+      const response = await axios.post(`/api/users`, personalInfo, {
         withCredentials: true,
       });
       set({ userId: response.data.id }); // Store returned userId
@@ -37,7 +36,7 @@ const useVideoStore = create((set) => ({
   // Check if the interview has expired
   checkInterviewStatus: async (interviewId) => {
     try {
-      const response = await axios.get(`/interview/${interviewId}`, {
+      const response = await axios.get(`/api/interview/${interviewId}`, {
         withCredentials: true,
       });
       const { expireDate } = response.data;
@@ -57,7 +56,7 @@ const useVideoStore = create((set) => ({
     formData.append("userId", userId);
 
     try {
-      const response = await axios.post(`/videos`, formData, {
+      const response = await axios.post(`/api/videos`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -71,7 +70,7 @@ const useVideoStore = create((set) => ({
   // Delete a video
   deleteVideo: async (id) => {
     try {
-      await axios.delete(`/videos/${id}`, {
+      await axios.delete(`/api/videos/${id}`, {
         withCredentials: true,
       });
       set((state) => ({

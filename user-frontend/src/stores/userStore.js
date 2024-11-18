@@ -18,7 +18,7 @@ const useUserStore = create((set, get) => ({
   createUser: async () => {
     try {
       const { personalInfo } = get();
-      const response = await axios.post("/users/create", personalInfo);
+      const response = await axios.post("/api/users/create", personalInfo);
       set({
         userId: response.data.user._id,
       });
