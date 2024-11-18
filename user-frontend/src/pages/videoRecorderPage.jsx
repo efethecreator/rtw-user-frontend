@@ -17,10 +17,9 @@ const VideoRecorderPage = () => {
   useEffect(() => {
     const fetchQuestions = async (id) => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/api/interview/${id}/questions`,
-          { withCredentials: true }
-        );
+        const response = await axios.get(`/api/interview/${id}/questions`, {
+          withCredentials: true,
+        });
         setQuestions(response.data.questions || []);
       } catch (error) {
         console.error("Error fetching questions:", error);

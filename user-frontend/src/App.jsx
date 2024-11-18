@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import VideoRecorderPage from "./pages/VideoRecorderPage"; // VideoRecorderPage bileşenini dahil edin
+import VideoRecorderPage from "./pages/videoRecorderPage"; // VideoRecorderPage bileşenini dahil edin
 import InterviewCompleted from "./pages/InterviewCompleted";
 import NotFound from "./pages/NotFound"; // NotFound bileşenini ekleyin
 

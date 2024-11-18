@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import axios from 'axios';
+import { create } from "zustand";
+import axios from "axios";
 
 const useUserStore = create((set, get) => ({
   userId: null,
@@ -18,7 +18,7 @@ const useUserStore = create((set, get) => ({
   createUser: async () => {
     try {
       const { personalInfo } = get();
-      const response = await axios.post('http://localhost:8000/api/users/create', personalInfo);
+      const response = await axios.post("/users/create", personalInfo);
       set({
         userId: response.data.user._id,
       });
