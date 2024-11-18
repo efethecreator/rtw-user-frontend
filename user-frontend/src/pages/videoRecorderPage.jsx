@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import UserInformation from "../components/UserInformation";
+import UserInformation from "../components/userInformation";
 import VideoRecorder from "../components/VideoRecorder";
 import useUserStore from "../stores/userStore";
 import useVideoStore from "../stores/videoStore";
